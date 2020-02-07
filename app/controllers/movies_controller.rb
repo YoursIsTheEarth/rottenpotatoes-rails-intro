@@ -14,31 +14,37 @@ class MoviesController < ApplicationController
     @sort = ''
     @all_ratings = Movie.order(:rating).select(:rating).map(&:rating).uniq
     @ratings = []
-    
-    filtered = false
-    
+
     if params[:ratings]
       params[:ratings].each {|key, val| @ratings << key}
-      filtered = true
+      session[:ratings] = @ratings
+    elsif session[:ratings]
+      @ratings = session[:ratings]
+    else
+      @ratings = @all_ratings
     end
     
     if params[:sort]
       @sort = params[:sort]
+      session[:sort] = @sort
       if params[:sort] == 'title'
         @title_style = 'hilite'
       elsif params[:sort] == 'release_date'
+        @date_style = 'hilite'
+      end
+    elsif session[:sort]
+      @sort = session[:sort]
+      if session[:sort] == 'title'
+        @title_style = 'hilite'
+      elsif session[:sort] == 'release_date'
         @date_style = 'hilite'
       end
     else
       @movies = Movie.all
     end
     
-    if filtered
-      @movies = Movie.where(:rating => @ratings).order(@sort)
-    else
-      @movies = Movie.order(@sort)
-    end
-    
+    @movies = Movie.where(:rating => @ratings).order(@sort)
+
   end
 
   def new
