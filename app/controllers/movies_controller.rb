@@ -37,11 +37,7 @@ class MoviesController < ApplicationController
       @ratings = @all_ratings
     end
     
-    if @ratings
-      @movies = Movie.where(:rating => @ratings).order(@sort)
-    else
-      @movies = Movie.order(@sort)
-    end
+    @movies = Movie.where(:rating => @ratings).order(@sort)
   end
 
   def new
