@@ -12,6 +12,8 @@ class MoviesController < ApplicationController
 
   def index
     @sort = ''
+    @title_style = ''
+    @date_style = ''
     @all_ratings = Movie.order(:rating).select(:rating).map(&:rating).uniq
     @ratings = []
     
