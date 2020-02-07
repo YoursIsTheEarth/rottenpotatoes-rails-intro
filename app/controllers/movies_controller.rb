@@ -11,9 +11,19 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @sort = ''
+    @all_ratings = Movie.order(:rating).select(:rating).map(&:rating).uniq
+    @ratings = []
+    
+    filtered = false
+    
+    if params[:ratings]
+      params[:ratings].each {|key, val| @ratings << key}
+      filtered = true
+    end
+    
     if params[:sort]
-      @movies = Movie.order(params[:sort])
-      
+      @sort = params[:sort]
       if params[:sort] == 'title'
         @title_style = 'hilite'
       elsif params[:sort] == 'release_date'
@@ -21,6 +31,12 @@ class MoviesController < ApplicationController
       end
     else
       @movies = Movie.all
+    end
+    
+    if filtered
+      @movies = Movie.where(:rating => @ratings).order(@sort)
+    else
+      @movies = Movie.order(@sort)
     end
     
   end
